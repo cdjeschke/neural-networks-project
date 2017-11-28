@@ -111,11 +111,28 @@ class TestHopfieldNetwork(unittest.TestCase):
         v_two = [-1, -1, -1, 1, 1, 1, -1, -1, -1]
         network = HopfieldNetwork([v_one, v_two])
 
+        # noisy version of v_one
         p_noisy = [1, 1, -1, -1, -1, -1, -1, -1, 1]
         p1 = network.recall(p_noisy)
         p2 = network.recall(p1)
-        p3 = network.recall(p2)
-        print p3
+        results = network.recall(p2)
+        npt.assert_equal(v_one, results)
+        print "Synchronous recall results: {0}".format(results)
+
+    def test_asynchronous_recall(self):
+        """
+        Recall a reconstructed exemplar using the asynchronous method.
+        """
+        v_one = [1, -1, -1, -1, 1, -1, -1, -1, 1]
+        v_two = [-1, -1, -1, 1, 1, 1, -1, -1, -1]
+        network = HopfieldNetwork([v_one, v_two], debug=True)
+
+        # Noisy version of exemplar 1
+        p = [1, 1, -1, -1, -1, -1, -1, -1, 1]
+        for i in range(0, 3):
+            p = network.recall(p, asynchronous=True)
+        npt.assert_equal(v_one, p)
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestHopfieldNetwork)

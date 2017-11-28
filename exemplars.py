@@ -181,7 +181,7 @@ class Exemplars(object):
         """
 
         def flip_bit(x):
-            i = random.uniform(0, 1)
+            i = random.random()
             if i <= p:
                 return x * -1
             else:
