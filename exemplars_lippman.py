@@ -2,7 +2,7 @@ import copy
 import random
 
 
-class Exemplars(object):
+class ExemplarsLippman(object):
     """
     Generates the exemplars for the numbers 0 through 8, returning them as either 10x10 matrices, or 
     vectors of length 100. 
@@ -128,7 +128,7 @@ class Exemplars(object):
 
     @staticmethod
     def get_exemplars(as_matrices=False):
-        x = Exemplars()
+        x = ExemplarsLippman()
 
         if as_matrices:
             return x.exemplars
