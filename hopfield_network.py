@@ -8,7 +8,7 @@ class HopfieldNetwork(object):
     for the network are infered from the exemplar vectors supplied during the initialization.
     """
 
-    def __init__(self, v_exemplars, learning_rule='Hebbian', debug=False):
+    def __init__(self, v_exemplars, learning_rule='Hebbian', scaled='False', debug=False):
         """
         Initialize a Hopfield Network given a list of exemplars and a specified learning rule
         :param v_exemplars: list of exemplars (list of vectors)
@@ -24,40 +24,41 @@ class HopfieldNetwork(object):
 
         # Need at least 1 exemplar
         assert(len(v_exemplars[0]) >= 1)
+        self.__num_exemplars = len(v_exemplars)
 
         # Hebbian learning
         if learning_rule is "Hebbian":
-            self.__hebbian_learning_rule(v_exemplars, scaled=False)
+            self.__hebbian_learning_rule(v_exemplars, scaled)
         elif learning_rule == "Storkey":
             self.__storkey_learning(v_exemplars)
         else:
             print "Unrecognized rule"
             # throw exception...
 
-    def __hebbian_learning_rule(self, v_exemplars, scaled=False):
+    def __hebbian_learning_rule(self, v_exemplars, scaled):
         """
         Implement the Hebb rule for learning the Hopfield network
         :param v_exemplars: exemplars
         :param scaled: should the weights be scaled by n=number of exemplars
         :return: initialized weight matrix
         """
+        # Start with an empty weights matrix
+        n = len(v_exemplars[0])
+        self.__weight_matrix = np.zeros(shape=(n, n))
 
         # Initialize the weight matrix
-        self.__weight_matrix = np.outer(v_exemplars[0], v_exemplars[0])
-        np.fill_diagonal(self.__weight_matrix, 0)
+        for exemplar in v_exemplars:
+            n = len(exemplar)
+            weights_delta = np.outer(exemplar, exemplar)
 
-        # If more than 1 exemplar, update the weight matrix
-        for m in range(1, len(v_exemplars)):
-            weights_delta = np.outer(v_exemplars[m], v_exemplars[m])
+            if scaled is True:
+                # Scale the weights
+                weights_delta = (1.0/n) * weights_delta
+
             np.fill_diagonal(weights_delta, 0)
             self.__weight_matrix = np.add(self.__weight_matrix, weights_delta)
 
-        if scaled:
-            # Scale the weights
-            self.__weight_matrix = np.true_divide(self.__weight_matrix, len(v_exemplars))
-
         # Estimate of capacity for a Hopfield Network trained via Hebbian learning
-        self.__num_exemplars = len(v_exemplars)
         if self.__num_exemplars > 1:
             self.__capacity = (1.0 * self.__num_exemplars) / (2 * math.log(self.__num_exemplars))
         else:
@@ -105,6 +106,7 @@ class HopfieldNetwork(object):
             # Update the weight matrix
             self.__weight_matrix = weight_matrix_v
 
+            ## TODO: Calculate capacity
 
     @property
     def num_exemplars(self):

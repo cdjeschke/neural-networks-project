@@ -102,53 +102,7 @@ class TestHopfieldNetwork(unittest.TestCase):
 
     def test_init_storkey(self):
         """
-        Initialization using the Storkey Learning Rule
-        :return: 
-        """
-        v_one = [1, -1, -1, -1, 1, -1, -1, -1, 1]
-
-        network = HopfieldNetwork([v_one], learning_rule="Storkey")
-        expected = np.array([
-            [0, -1, -1, -1, 1, -1, -1, -1, 1],
-            [-1, 0, 1, 1, -1, 1, 1, 1, -1],
-            [-1, 1, 0, 1, -1, 1, 1, 1, -1],
-            [-1, 1, 1, 0, -1, 1, 1, 1, -1],
-            [1, -1, -1, -1, 0, -1, -1, -1, 1],
-            [-1, 1, 1, 1, -1, 0, 1, 1, -1],
-            [-1, 1, 1, 1, -1, 1, 0, 1, -1],
-            [-1, 1, 1, 1, -1, 1, 1, 0, -1],
-            [1, -1, -1, -1, 1, -1, -1, -1, 0]
-        ], np.int64)
-        #npt.assert_equal(network.weight_matrix, expected)
-        print "Weight matrix:\n{0}".format(network.weight_matrix)
-
-    @unittest.skip("Still working...")
-    def test_init_storkey_2_exemplars(self):
-        """
-        Test the initialization of a Hopfield network using the Storkey Learning Rule
-        and 2 exemplars
-        """
-        v_one = [1, -1, -1, -1, 1, -1, -1, -1, 1]
-        v_two = [-1, -1, -1, 1, 1, 1, -1, -1, -1]
-        network = HopfieldNetwork([v_one, v_two], learning_rule="Storkey")
-        expected = np.array([
-            [0, 0, 0, -2, 0, -2, 0, 0, 2],
-            [0, 0, 2, 0, -2, 0, 2, 2, 0],
-            [0, 2, 0, 0, -2, 0, 2, 2, 0],
-            [-2, 0, 0, 0, 0, 2, 0, 0, -2],
-            [0, -2, -2, 0, 0, 0, -2, -2, 0],
-            [-2, 0, 0, 2, 0, 0, 0, 0, -2],
-            [0, 2, 2, 0, -2, 0, 0, 2, 0],
-            [0, 2, 2, 0, -2, 0, 2, 0, 0],
-            [2, 0, 0, -2, 0, -2, 0, 0, 0]
-        ], np.int64)
-        # npt.assert_equal(network.weight_matrix, expected)
-        print "Weight matrix is:\n{0}".format(network.weight_matrix)
-
-    @unittest.skip("Still working...")
-    def test_init_storkey_3_exemplars(self):
-        """
-        Test the initialization of a Hopfield network using 2 exemplars
+        Test the initialization of a Hopfield network using 3 exemplars
         """
         v_one = [1, -1, -1, -1, 1, -1, -1, -1, 1]
         v_two = [-1, -1, -1, 1, 1, 1, -1, -1, -1]
@@ -236,7 +190,6 @@ class TestHopfieldNetwork(unittest.TestCase):
             p = network.recall(p, asynchronous=True)
         npt.assert_equal(v_one, p)
 
-    @unittest.skip("Still working...")
     def test_recall_storkey(self):
         """
         Recall an original exemplar using the actual original exemplar (no noise) in a network
@@ -244,7 +197,8 @@ class TestHopfieldNetwork(unittest.TestCase):
         """
         v_one = [1, -1, -1, -1, 1, -1, -1, -1, 1]
         v_two = [-1, -1, -1, 1, 1, 1, -1, -1, -1]
-        network = HopfieldNetwork([v_one, v_two], learning_rule="Storkey")
+        v_three = [-1, -1, 1, -1, -1, 1, -1, -1, 1]
+        network = HopfieldNetwork([v_one, v_two, v_three], learning_rule="Storkey")
 
         # Check recall of exemplar 1
         results = network.recall([1, -1, -1, -1, 1, -1, -1, -1, 1])
@@ -254,6 +208,34 @@ class TestHopfieldNetwork(unittest.TestCase):
         results = network.recall([-1, -1, -1, 1, 1, 1, -1, -1, -1])
         npt.assert_equal(results, v_two)
 
+        # Check recall of exemplar 3
+        results = network.recall([-1, -1, 1, -1, -1, 1, -1, -1, 1])
+        npt.assert_equal(results, v_three)
+
+    def test_noisy_recall_storkey(self):
+        """
+        Recall an original exemplar using the actual original exemplar (no noise) in a network
+        trained using the Storkey Learning rule
+        """
+        v_one = [1, -1, -1, -1, 1, -1, -1, -1, 1]
+        v_two = [-1, -1, -1, 1, 1, 1, -1, -1, -1]
+        v_three = [-1, -1, 1, -1, -1, 1, -1, -1, 1]
+        network = HopfieldNetwork([v_one, v_two, v_three], learning_rule="Storkey")
+
+        # Check recall of exemplar 1
+        results = network.recall([1, -1, -1, -1, 1, -1, -1, -1, 1])
+        npt.assert_equal(results, v_one)
+
+        # Check recall of exemplar 2
+        results = network.recall([-1, -1, -1, 1, 1, 1, -1, -1, -1])
+        npt.assert_equal(results, v_two)
+
+        # Check recall of exemplar 3
+        results = network.recall([1, -1, 1, -1, -1, 1, -1, 1, 1])
+        results = network.recall(results)
+        results = network.recall(results)  ## TODO:  Look ok to recall after 3 iterations?
+        print "Results: {0}".format(results)
+        npt.assert_equal(results, v_three)
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestHopfieldNetwork)
