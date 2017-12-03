@@ -65,7 +65,7 @@ class HopfieldNetwork(object):
             np.fill_diagonal(weights_delta, 0)
             self.__weight_matrix = np.add(self.__weight_matrix, weights_delta)
 
-        # Estimate of capacity for a Hopfield Network trained via Hebbian learning
+        # Capacity for a Hopfield Network trained via Hebbian learning
         if self.__num_neurons > 1:
             self.__capacity = (1.0 * self.__num_neurons) / (2 * math.log(self.__num_neurons))
         else:
@@ -115,7 +115,11 @@ class HopfieldNetwork(object):
             # Update the weight matrix
             self.__weight_matrix = weight_matrix_v
 
-            ## TODO: Calculate capacity
+            # Capacity for a Hopfield Network trained using Storkey
+            if self.__num_neurons > 1:
+                self.__capacity = (1.0 * self.__num_neurons) / math.sqrt(2 * math.log(self.__num_neurons))
+            else:
+                self.__capacity = 1
 
     @property
     def num_neurons(self):
