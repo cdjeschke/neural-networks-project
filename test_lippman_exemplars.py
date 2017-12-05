@@ -1,6 +1,6 @@
 import unittest
 
-from exemplars import Exemplars
+from lippmann_exemplars import LippmanExemplars
 
 
 class TestExemplars(unittest.TestCase):
@@ -13,8 +13,8 @@ class TestExemplars(unittest.TestCase):
         Confirm conversion from matrix to vector form works
         :return: 
         """
-        zero = Exemplars.get_exemplars(as_matrices=True)[0]
-        v_zero = Exemplars.to_vector(zero)
+        zero = LippmanExemplars.get_exemplars(as_matrices=True)[0]
+        v_zero = LippmanExemplars.to_vector(zero)
         assert(v_zero == [-1, -1, -1, 1, 1, 1, 1, -1, -1, -1,
             -1, -1, 1, 1, -1, -1, 1, 1, -1, -1,
             -1, 1, 1, -1, -1, -1, -1, 1, 1, -1,
@@ -31,8 +31,8 @@ class TestExemplars(unittest.TestCase):
         Confirm conversion from vector to matrix form works
         :return: 
         """
-        v_four = Exemplars.get_exemplars()[4]
-        four = Exemplars.to_matrix(v_four)
+        v_four = LippmanExemplars.get_exemplars()[4]
+        four = LippmanExemplars.to_matrix(v_four)
         assert(four == [
             [-1, -1, -1, 1, -1, -1, -1, -1, -1, 1],
             [-1, -1, -1, 1, -1, -1, -1, -1, -1, 1],

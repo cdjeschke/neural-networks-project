@@ -44,7 +44,6 @@ class HopfieldNetwork(object):
             print "Unrecognized rule"
             # throw exception...
 
-
     def __hebbian_learning_rule(self, v_exemplars):
         """
         Implement the Hebb rule for learning the Hopfield network
